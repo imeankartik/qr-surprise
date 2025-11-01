@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<!-- saved from url=(0078)https://69062e6c28ce688c809b1c96-%2Droaring-valkyrie-4f177a.netlify.app/#page3 -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Scan Me — Tiny Surprise</title>
+  <style>
+    :root {
+      --bg:#0f1724; --card:#0b1220; --accent:#7c3aed;
+      --glass:rgba(255,255,255,0.04); --text:#e6eef8;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue";
+      background:linear-gradient(180deg,#071129 0%, #07132a 100%);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .card{
+      width:380px;max-width:100%;
+      background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+      border-radius:14px;
+      padding:18px;
+      border:1px solid rgba(255,255,255,0.04);
+      box-shadow:0 6px 30px rgba(2,6,23,0.6);
+    }
+    h1{font-size:20px;margin:0 0 12px}
+    nav{display:flex;gap:8px;margin-bottom:12px}
+    button.tab{
+      flex:1;padding:8px 10px;border-radius:10px;border:0;
+      background:var(--glass);color:var(--text);cursor:pointer;font-weight:600
+    }
+    button.tab.active{
+      background:linear-gradient(90deg,var(--accent),#4f46e5);color:white
+    }
+    .page{display:none;padding:8px 2px}
+    .page.active{display:block}
+    .msg{
+      background:rgba(255,255,255,0.02);
+      padding:18px;border-radius:12px;margin-bottom:12px;text-align:center;font-weight:700
+    }
+    .small{font-size:13px;opacity:.9}
+    .qrwrap{display:flex;gap:12px;align-items:center}
+    img.qr{width:116px;height:116px;border-radius:10px;background:white;padding:6px}
+    .controls{display:flex;gap:8px}
+    .btn{padding:8px 10px;border-radius:10px;border:0;background:#0b1220;color:var(--text);cursor:pointer}
+    .link{word-break:break-all;font-size:12px;opacity:.9}
+    .confetti{pointer-events:none;position:fixed;inset:0;overflow:hidden}
+    .confetti div{position:absolute;width:10px;height:16px;opacity:.95;transform-origin:center;animation:fall linear;}
+    @keyframes fall{to{transform:translateY(110vh) rotate(360deg);opacity:0}}
+    footer{font-size:12px;color:rgba(255,255,255,0.6);text-align:center;margin-top:8px}
+  </style>
+</head>
+<body data-new-gr-c-s-check-loaded="14.1260.0" data-gr-ext-installed="">
+  <div class="card">
+    <h1>Scan me — tiny surprise</h1>
+    <nav>
+      <button class="tab active" data-page="page1">Page 1</button>
+      <button class="tab" data-page="page2">Page 2</button>
+      <button class="tab" data-page="page3">Page 3</button>
+    </nav>
+
+    <section id="page1" class="page active">
+      <div class="msg">Sorry — I messed up. 🙏</div>
+      <p class="small">A short, honest note. Maybe add a voice note or GIF later.</p>
+    </section>
+
+    <section id="page2" class="page">
+      <div class="msg">I'm so grateful for you ✨</div>
+      <p class="small">Tell them why. Keep it real.</p>
+    </section>
+
+    <section id="page3" class="page">
+      <div class="msg">Wanna see something crazy? 🎉</div>
+      <p class="small">Click the confetti button and enjoy.</p>
+      <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+        <button id="confettiBtn" class="btn">Confetti</button>
+        <button id="surpriseBtn" class="btn">Random emoji</button>
+        <span id="emojiOut" style="font-size:20px;margin-left:8px"></span>
+      </div>
+    </section>
+
+    <div style="margin-top:12px" class="qrwrap">
+      <div>
+        <div class="small">QR for this page</div>
+        <img id="qrImg" class="qr" alt="QR code" src="https://69062e6c28ce688c809b1c96--roaring-valkyrie-4f177a.netlify.app/">
+      </div>
+      <div style="flex:1">
+        <div class="small">Link</div>
+        <div class="link" id="linkOut"></div>
+        <div style="margin-top:8px" class="controls">
+          <button id="copyBtn" class="btn">Copy link</button>
+          <button id="openBtn" class="btn">Open in new tab</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>Save this file as index.html and upload to Netlify or GitHub Pages.</footer>
+  </div>
+
+  <div class="confetti" id="confetti"></div>
+
+  <script>
+    const tabs=document.querySelectorAll('button.tab');
+    const pages=document.querySelectorAll('.page');
+    function showPage(id){
+      pages.forEach(p=>p.classList.toggle('active',p.id===id));
+      tabs.forEach(t=>t.classList.toggle('active',t.dataset.page===id));
+      updateQR();
+    }
+    tabs.forEach(t=>t.addEventListener('click',()=>{location.hash=t.dataset.page;}));
+    const initial=location.hash?location.hash.replace('#',''):'page1';
+    showPage(initial);
+    window.addEventListener('hashchange',()=>{showPage(location.hash.replace('#',''));});
+
+    const qrImg=document.getElementById('qrImg');
+    const linkOut=document.getElementById('linkOut');
+    function currentURL(){return location.origin+location.pathname+'#'+(location.hash?location.hash.replace('#',''):'page1');}
+    function updateQR(){
+      const url=currentURL();
+      linkOut.textContent=url;
+      qrImg.src='https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl='+encodeURIComponent(url);
+    }
+    updateQR();
+
+    document.getElementById('copyBtn').addEventListener('click',async()=>{
+      try{await navigator.clipboard.writeText(currentURL());alert('Link copied!')}
+      catch(e){alert('Copy failed — select manually')}
+    });
+    document.getElementById('openBtn').addEventListener('click',()=>{window.open(currentURL(), '_blank');});
+
+    function makeConfetti(){
+      const wrap=document.getElementById('confetti');
+      for(let i=0;i<35;i++){
+        const el=document.createElement('div');
+        el.style.left=Math.random()*100+'%';
+        el.style.top=(-20-Math.random()*40)+'px';
+        el.style.background=['#ff5c8a','#ffd166','#4ade80','#60a5fa','#a78bfa'][Math.floor(Math.random()*5)];
+        el.style.transform='rotate('+Math.random()*360+'deg)';
+        el.style.animationDuration=(3+Math.random()*3)+'s';
+        el.style.width=(6+Math.random()*12)+'px';
+        el.style.height=(8+Math.random()*12)+'px';
+        wrap.appendChild(el);
+        setTimeout(()=>el.remove(),6000);
+      }
+    }
+    document.getElementById('confettiBtn').addEventListener('click',()=>{makeConfetti();});
+    const emojis=['🤯','🥳','😍','🤭','😅','😜','🎉','✨','🔥','🙂'];
+    document.getElementById('surpriseBtn').addEventListener('click',()=>{
+      document.getElementById('emojiOut').textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    });
+    setInterval(()=>{updateQR();},1500);
+  </script>
+
+</body><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open"><style>
+      div.grammarly-desktop-integration {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        user-select:none;
+      }
+
+      div.grammarly-desktop-integration:before {
+        content: attr(data-content);
+      }
+    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;limited&quot;,&quot;isActive&quot;:false,&quot;isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integration></html>
