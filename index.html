@@ -1,180 +1,197 @@
-<!DOCTYPE html>
-<!-- saved from url=(0078)https://69062e6c28ce688c809b1c96-%2Droaring-valkyrie-4f177a.netlify.app/#page3 -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Scan Me — Tiny Surprise</title>
-  <style>
-    :root {
-      --bg:#0f1724; --card:#0b1220; --accent:#7c3aed;
-      --glass:rgba(255,255,255,0.04); --text:#e6eef8;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue";
-      background:linear-gradient(180deg,#071129 0%, #07132a 100%);
-      color:var(--text);
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-    }
-    .card{
-      width:380px;max-width:100%;
-      background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
-      border-radius:14px;
-      padding:18px;
-      border:1px solid rgba(255,255,255,0.04);
-      box-shadow:0 6px 30px rgba(2,6,23,0.6);
-    }
-    h1{font-size:20px;margin:0 0 12px}
-    nav{display:flex;gap:8px;margin-bottom:12px}
-    button.tab{
-      flex:1;padding:8px 10px;border-radius:10px;border:0;
-      background:var(--glass);color:var(--text);cursor:pointer;font-weight:600
-    }
-    button.tab.active{
-      background:linear-gradient(90deg,var(--accent),#4f46e5);color:white
-    }
-    .page{display:none;padding:8px 2px}
-    .page.active{display:block}
-    .msg{
-      background:rgba(255,255,255,0.02);
-      padding:18px;border-radius:12px;margin-bottom:12px;text-align:center;font-weight:700
-    }
-    .small{font-size:13px;opacity:.9}
-    .qrwrap{display:flex;gap:12px;align-items:center}
-    img.qr{width:116px;height:116px;border-radius:10px;background:white;padding:6px}
-    .controls{display:flex;gap:8px}
-    .btn{padding:8px 10px;border-radius:10px;border:0;background:#0b1220;color:var(--text);cursor:pointer}
-    .link{word-break:break-all;font-size:12px;opacity:.9}
-    .confetti{pointer-events:none;position:fixed;inset:0;overflow:hidden}
-    .confetti div{position:absolute;width:10px;height:16px;opacity:.95;transform-origin:center;animation:fall linear;}
-    @keyframes fall{to{transform:translateY(110vh) rotate(360deg);opacity:0}}
-    footer{font-size:12px;color:rgba(255,255,255,0.6);text-align:center;margin-top:8px}
-  </style>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Little Pink Surprise</title>
+<style>
+  :root{
+    --bg1:#ffdbe9; --bg2:#ffeef7; --card:#fff2f8;
+    --accent:#ff6fa3; --muted:rgba(0,0,0,0.06); --text:#3b1b2b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto; background:linear-gradient(180deg,var(--bg1),var(--bg2)); min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:var(--text)}
+  .card{width:min(720px,96vw);max-width:720px;background:linear-gradient(180deg,var(--card),#fff);border-radius:18px;padding:18px;box-shadow:0 12px 40px rgba(187,85,135,0.12);border:1px solid rgba(255,255,255,0.6);overflow:hidden}
+  header{display:flex;align-items:center;gap:12px}
+  h1{margin:0;font-size:20px;color:var(--accent);font-weight:800}
+  .stage{position:relative;height:540px;border-radius:12px;margin-top:16px;overflow:hidden;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,244,250,0.4));display:flex;align-items:center;justify-content:center;flex-direction:column}
+  .page{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;transition:opacity .45s ease, transform .45s cubic-bezier(.2,.9,.3,1);opacity:0;transform:translateY(14px);pointer-events:none}
+  .page.active{opacity:1;transform:none;pointer-events:auto}
+  .bubble{background:white;border-radius:14px;padding:22px;max-width:640px;box-shadow:0 10px 30px rgba(219,101,149,0.08);border:1px solid rgba(255,255,255,0.7)}
+  .big{font-size:22px;font-weight:800;margin-bottom:8px;color:#b5175a}
+  .small{font-size:15px;color:#4a2a3a;margin:0}
+  .tap-hint{position:absolute;left:0;right:0;bottom:18px;margin:auto;text-align:center;font-size:13px;color:#8b536b;opacity:0.95}
+  .tap-area{position:absolute;inset:0;z-index:6}
+  .controls{display:flex;gap:10px;justify-content:center;margin-top:12px}
+  .btn{background:linear-gradient(180deg,var(--accent),#ff4d8a);border:0;color:white;padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer;box-shadow:0 8px 20px rgba(255,111,163,0.18)}
+  .ghost{background:transparent;border:1px solid rgba(183,63,110,0.12);color:#7a3550}
+  .dots{display:flex;gap:8px;justify-content:center;margin-top:12px}
+  .dot{width:9px;height:9px;border-radius:50%;background:rgba(183,63,110,0.12)}
+  .dot.active{background:var(--accent);box-shadow:0 6px 18px rgba(255,111,163,0.12)}
+  /* floating hearts */
+  .heart{position:absolute;font-size:22px;opacity:0.95;transform:translateY(0);animation:floatUp 3500ms linear infinite;pointer-events:none}
+  @keyframes floatUp{0%{transform:translateY(6px) scale(0.95);opacity:1}100%{transform:translateY(-220px) scale(1.08);opacity:0}}
+  /* monkey */
+  .monkey{position:absolute;right:18px;bottom:18px;font-size:56px;transform-origin:center;transition:transform .35s ease}
+  .monkey.bounce{animation:monkeyBounce .9s ease}
+  @keyframes monkeyBounce{0%{transform:translateY(0)}30%{transform:translateY(-8px)}60%{transform:translateY(0)}100%{transform:translateY(0)}}
+  /* confetti */
+  .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9999}
+  .confetti div{position:absolute;width:10px;height:14px;border-radius:3px;opacity:0.95}
+  /* music toggle */
+  .musicToggle{position:absolute;left:18px;top:18px;background:rgba(255,255,255,0.9);padding:8px;border-radius:10px;border:0;cursor:pointer;font-weight:700;color:#b3366e;box-shadow:0 6px 18px rgba(179,59,110,0.06)}
+  footer{font-size:12px;color:#7a3550;text-align:center;margin-top:12px}
+  @media (max-width:480px){ .stage{height:720px} .monkey{font-size:46px} }
+</style>
 </head>
-<body data-new-gr-c-s-check-loaded="14.1260.0" data-gr-ext-installed="">
+<body>
   <div class="card">
-    <h1>Scan me — tiny surprise</h1>
-    <nav>
-      <button class="tab active" data-page="page1">Page 1</button>
-      <button class="tab" data-page="page2">Page 2</button>
-      <button class="tab" data-page="page3">Page 3</button>
-    </nav>
+    <header>
+      <h1>little pink surprise</h1>
+      <div style="flex:1"></div>
+      <div style="font-size:13px;color:#9b4b6a">cute & playful • tap to continue</div>
+    </header>
 
-    <section id="page1" class="page active">
-      <div class="msg">Sorry — I messed up. 🙏</div>
-      <p class="small">A short, honest note. Maybe add a voice note or GIF later.</p>
-    </section>
+    <div class="stage" id="stage" role="main" aria-live="polite">
+      <button class="musicToggle" id="musicToggle">🎵 Music</button>
 
-    <section id="page2" class="page">
-      <div class="msg">I'm so grateful for you ✨</div>
-      <p class="small">Tell them why. Keep it real.</p>
-    </section>
-
-    <section id="page3" class="page">
-      <div class="msg">Wanna see something crazy? 🎉</div>
-      <p class="small">Click the confetti button and enjoy.</p>
-      <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
-        <button id="confettiBtn" class="btn">Confetti</button>
-        <button id="surpriseBtn" class="btn">Random emoji</button>
-        <span id="emojiOut" style="font-size:20px;margin-left:8px"></span>
-      </div>
-    </section>
-
-    <div style="margin-top:12px" class="qrwrap">
-      <div>
-        <div class="small">QR for this page</div>
-        <img id="qrImg" class="qr" alt="QR code" src="https://69062e6c28ce688c809b1c96--roaring-valkyrie-4f177a.netlify.app/">
-      </div>
-      <div style="flex:1">
-        <div class="small">Link</div>
-        <div class="link" id="linkOut"></div>
-        <div style="margin-top:8px" class="controls">
-          <button id="copyBtn" class="btn">Copy link</button>
-          <button id="openBtn" class="btn">Open in new tab</button>
+      <!-- Page 1 -->
+      <div class="page active" id="p1" data-index="0">
+        <div class="bubble">
+          <div class="big">hey <span class="name">[name]</span> — cutie 💕</div>
+          <p class="small">i messed up and i wanted to say sorry. tap when you're ready.</p>
         </div>
+        <div class="dots"><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
       </div>
+
+      <!-- Page 2 -->
+      <div class="page" id="p2" data-index="1">
+        <div class="bubble">
+          <div class="big">you’re honestly amazing ✨</div>
+          <p class="small">your smile, your laugh, the little things — they mean a lot. tap to see a surprise.</p>
+        </div>
+        <div class="dots"><span class="dot"></span><span class="dot active"></span><span class="dot"></span></div>
+      </div>
+
+      <!-- Page 3 -->
+      <div class="page" id="p3" data-index="2">
+        <div class="bubble">
+          <div class="big">ready for a tiny party? 🎉</div>
+          <p class="small">tap the button and watch the cute chaos. (and maybe a monkey will cheer)</p>
+          <div style="display:flex;gap:10px;justify-content:center;margin-top:12px">
+            <button class="btn" id="partyBtn">pop confetti</button>
+            <button class="btn ghost" id="restartBtn">restart</button>
+          </div>
+        </div>
+        <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot active"></span></div>
+      </div>
+
+      <div class="tap-area" id="tapArea" aria-hidden="false"></div>
+      <div class="tap-hint" id="tapHint">tap anywhere to continue</div>
+
+      <!-- cute monkey -->
+      <div class="monkey" id="monkey">🐒</div>
     </div>
 
-    <footer>Save this file as index.html and upload to Netlify or GitHub Pages.</footer>
+    <div style="display:flex;justify-content:center;gap:10px;margin-top:12px">
+      <button class="btn" id="copyLink">copy link</button>
+      <button class="btn ghost" id="openLink">open</button>
+    </div>
+
+    <footer>Replace <code>[name]</code> with the real name locally before uploading.</footer>
   </div>
 
   <div class="confetti" id="confetti"></div>
 
-  <script>
-    const tabs=document.querySelectorAll('button.tab');
-    const pages=document.querySelectorAll('.page');
-    function showPage(id){
-      pages.forEach(p=>p.classList.toggle('active',p.id===id));
-      tabs.forEach(t=>t.classList.toggle('active',t.dataset.page===id));
-      updateQR();
-    }
-    tabs.forEach(t=>t.addEventListener('click',()=>{location.hash=t.dataset.page;}));
-    const initial=location.hash?location.hash.replace('#',''):'page1';
-    showPage(initial);
-    window.addEventListener('hashchange',()=>{showPage(location.hash.replace('#',''));});
+<script>
+  // basic page flow
+  const pages = [...document.querySelectorAll('.page')];
+  const tapArea = document.getElementById('tapArea');
+  const tapHint = document.getElementById('tapHint');
+  const monkey = document.getElementById('monkey');
+  const confettiWrap = document.getElementById('confetti');
+  let idx = 0;
+  function show(i){ pages.forEach((p,pi)=>{ p.classList.toggle('active', pi===i); }); idx = i; tapHint.style.opacity = (idx===pages.length-1? '0': '1'); }
+  function advance(){ if(idx < pages.length-1) show(idx+1); else { monkey.classList.add('bounce'); setTimeout(()=>monkey.classList.remove('bounce'),900); } }
+  tapArea.addEventListener('click', (e)=>{ if(e.target.closest('button')) return; advance(); });
+  window.addEventListener('keydown', (e)=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); advance(); } });
 
-    const qrImg=document.getElementById('qrImg');
-    const linkOut=document.getElementById('linkOut');
-    function currentURL(){return location.origin+location.pathname+'#'+(location.hash?location.hash.replace('#',''):'page1');}
-    function updateQR(){
-      const url=currentURL();
-      linkOut.textContent=url;
-      qrImg.src='https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl='+encodeURIComponent(url);
-    }
-    updateQR();
-
-    document.getElementById('copyBtn').addEventListener('click',async()=>{
-      try{await navigator.clipboard.writeText(currentURL());alert('Link copied!')}
-      catch(e){alert('Copy failed — select manually')}
-    });
-    document.getElementById('openBtn').addEventListener('click',()=>{window.open(currentURL(), '_blank');});
-
-    function makeConfetti(){
-      const wrap=document.getElementById('confetti');
-      for(let i=0;i<35;i++){
-        const el=document.createElement('div');
-        el.style.left=Math.random()*100+'%';
-        el.style.top=(-20-Math.random()*40)+'px';
-        el.style.background=['#ff5c8a','#ffd166','#4ade80','#60a5fa','#a78bfa'][Math.floor(Math.random()*5)];
-        el.style.transform='rotate('+Math.random()*360+'deg)';
-        el.style.animationDuration=(3+Math.random()*3)+'s';
-        el.style.width=(6+Math.random()*12)+'px';
-        el.style.height=(8+Math.random()*12)+'px';
-        wrap.appendChild(el);
-        setTimeout(()=>el.remove(),6000);
+  // confetti
+  function makeConfetti(){
+    const colors = ['#ff7aa0','#ffd1ec','#ffefc7','#ffd6e8','#ffb6d5'];
+    for(let i=0;i<50;i++){
+      const el = document.createElement('div');
+      el.style.left = Math.random()*100 + '%';
+      el.style.top = '-5%';
+      el.style.width = (6+Math.random()*14)+'px';
+      el.style.height = (8+Math.random()*10)+'px';
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.transform = 'rotate('+Math.random()*360+'deg)';
+      confettiWrap.appendChild(el);
+      const duration = 2400 + Math.random()*1600;
+      const start = performance.now();
+      function frame(now){
+        const t = Math.min(1,(now-start)/duration);
+        el.style.top = (t*110)+'%';
+        el.style.left = (parseFloat(el.style.left) + (Math.random()*20-10)*t) + '%';
+        el.style.opacity = 1-t;
+        if(t<1) requestAnimationFrame(frame); else el.remove();
       }
+      requestAnimationFrame(frame);
     }
-    document.getElementById('confettiBtn').addEventListener('click',()=>{makeConfetti();});
-    const emojis=['🤯','🥳','😍','🤭','😅','😜','🎉','✨','🔥','🙂'];
-    document.getElementById('surpriseBtn').addEventListener('click',()=>{
-      document.getElementById('emojiOut').textContent=emojis[Math.floor(Math.random()*emojis.length)];
-    });
-    setInterval(()=>{updateQR();},1500);
-  </script>
+    // small heart burst
+    for(let h=0; h<6; h++){ createHeart(); }
+  }
+  function createHeart(){
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.style.left = (20 + Math.random()*60) + '%';
+    heart.style.fontSize = (18 + Math.random()*20) + 'px';
+    heart.textContent = ['💕','💗','💓','💖'][Math.floor(Math.random()*4)];
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(), 3500);
+  }
 
-</body><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open"><style>
-      div.grammarly-desktop-integration {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select:none;
-        user-select:none;
-      }
+  // party button
+  document.getElementById('partyBtn').addEventListener('click', ()=>{ makeConfetti(); monkey.classList.add('bounce'); setTimeout(()=>monkey.classList.remove('bounce'),900); });
 
-      div.grammarly-desktop-integration:before {
-        content: attr(data-content);
-      }
-    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;limited&quot;,&quot;isActive&quot;:false,&quot;isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integration></html>
+  // restart
+  document.getElementById('restartBtn').addEventListener('click', ()=> show(0));
+
+  // copy/open link
+  const base = location.origin + location.pathname;
+  document.getElementById('copyLink').addEventListener('click', async ()=>{
+    const href = base + '#page' + (idx+1);
+    try{ await navigator.clipboard.writeText(href); alert('Link copied: ' + href); }catch(e){ prompt('Copy this link', href); }
+  });
+  document.getElementById('openLink').addEventListener('click', ()=>{ const href = base + '#page' + (idx+1); window.open(href, '_blank'); });
+
+  // small music loader (local file named music.mp3)
+  const musicToggle = document.getElementById('musicToggle');
+  let audio;
+  let playing = false;
+  function loadAudio(){
+    audio = new Audio('music.mp3');
+    audio.loop = true;
+    audio.volume = 0.65;
+    audio.addEventListener('error', ()=>{ musicToggle.textContent = '🎵 Music (no file)'; });
+    audio.addEventListener('canplay', ()=>{ musicToggle.textContent = '🎵 Music (ready)'; });
+  }
+  musicToggle.addEventListener('click', ()=>{
+    if(!audio){ loadAudio(); musicToggle.textContent = '🎵 Loading...'; return; }
+    if(playing){ audio.pause(); playing=false; musicToggle.textContent='🎵 Music'; }
+    else { audio.play().then(()=>{ playing=true; musicToggle.textContent='🔊 Pause'; }).catch(()=>{ musicToggle.textContent='🎵 Tap to allow'; }); }
+  });
+
+  // reveal if hash provided
+  const h = location.hash.replace('#','');
+  if(h.startsWith('page')){
+    const n = parseInt(h.replace('page','')) - 1;
+    if(!Number.isNaN(n) && n>=0 && n<pages.length) show(n);
+  }
+
+  // initial
+  show(0);
+</script>
+</body>
+</html>
