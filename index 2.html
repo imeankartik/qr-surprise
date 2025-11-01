@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Little Pink Surprise</title>
+<style>
+  :root{
+    --bg1:#ffdbe9; --bg2:#ffeef7; --card:#fff2f8;
+    --accent:#ff6fa3; --muted:rgba(0,0,0,0.06); --text:#3b1b2b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto; background:linear-gradient(180deg,var(--bg1),var(--bg2)); min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:var(--text)}
+  .card{width:min(720px,96vw);max-width:720px;background:linear-gradient(180deg,var(--card),#fff);border-radius:18px;padding:18px;box-shadow:0 12px 40px rgba(187,85,135,0.12);border:1px solid rgba(255,255,255,0.6);overflow:hidden}
+  header{display:flex;align-items:center;gap:12px}
+  h1{margin:0;font-size:20px;color:var(--accent);font-weight:800}
+  .stage{position:relative;height:540px;border-radius:12px;margin-top:16px;overflow:hidden;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,244,250,0.4));display:flex;align-items:center;justify-content:center;flex-direction:column}
+  .page{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;transition:opacity .45s ease, transform .45s cubic-bezier(.2,.9,.3,1);opacity:0;transform:translateY(14px);pointer-events:none}
+  .page.active{opacity:1;transform:none;pointer-events:auto}
+  .bubble{background:white;border-radius:14px;padding:22px;max-width:640px;box-shadow:0 10px 30px rgba(219,101,149,0.08);border:1px solid rgba(255,255,255,0.7)}
+  .big{font-size:22px;font-weight:800;margin-bottom:8px;color:#b5175a}
+  .small{font-size:15px;color:#4a2a3a;margin:0}
+  .tap-hint{position:absolute;left:0;right:0;bottom:18px;margin:auto;text-align:center;font-size:13px;color:#8b536b;opacity:0.95}
+  .tap-area{position:absolute;inset:0;z-index:6}
+  .controls{display:flex;gap:10px;justify-content:center;margin-top:12px}
+  .btn{background:linear-gradient(180deg,var(--accent),#ff4d8a);border:0;color:white;padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer;box-shadow:0 8px 20px rgba(255,111,163,0.18)}
+  .ghost{background:transparent;border:1px solid rgba(183,63,110,0.12);color:#7a3550}
+  .dots{display:flex;gap:8px;justify-content:center;margin-top:12px}
+  .dot{width:9px;height:9px;border-radius:50%;background:rgba(183,63,110,0.12)}
+  .dot.active{background:var(--accent);box-shadow:0 6px 18px rgba(255,111,163,0.12)}
+  /* floating hearts */
+  .heart{position:absolute;font-size:22px;opacity:0.95;transform:translateY(0);animation:floatUp 3500ms linear infinite;pointer-events:none}
+  @keyframes floatUp{0%{transform:translateY(6px) scale(0.95);opacity:1}100%{transform:translateY(-220px) scale(1.08);opacity:0}}
+  /* monkey */
+  .monkey{position:absolute;right:18px;bottom:18px;font-size:56px;transform-origin:center;transition:transform .35s ease}
+  .monkey.bounce{animation:monkeyBounce .9s ease}
+  @keyframes monkeyBounce{0%{transform:translateY(0)}30%{transform:translateY(-8px)}60%{transform:translateY(0)}100%{transform:translateY(0)}}
+  /* confetti */
+  .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9999}
+  .confetti div{position:absolute;width:10px;height:14px;border-radius:3px;opacity:0.95}
+  /* music toggle */
+  .musicToggle{position:absolute;left:18px;top:18px;background:rgba(255,255,255,0.9);padding:8px;border-radius:10px;border:0;cursor:pointer;font-weight:700;color:#b3366e;box-shadow:0 6px 18px rgba(179,59,110,0.06)}
+  footer{font-size:12px;color:#7a3550;text-align:center;margin-top:12px}
+  @media (max-width:480px){ .stage{height:720px} .monkey{font-size:46px} }
+</style>
+</head>
+<body>
+  <div class="card">
+    <header>
+      <h1>little pink surprise</h1>
+      <div style="flex:1"></div>
+      <div style="font-size:13px;color:#9b4b6a">cute & playful • tap to continue</div>
+    </header>
+
+    <div class="stage" id="stage" role="main" aria-live="polite">
+      <button class="musicToggle" id="musicToggle">🎵 Music</button>
+
+      <!-- Page 1 -->
+      <div class="page active" id="p1" data-index="0">
+        <div class="bubble">
+          <div class="big">hey <span class="name">[name]</span> — cutie 💕</div>
+          <p class="small">i messed up and i wanted to say sorry. tap when you're ready.</p>
+        </div>
+        <div class="dots"><span class="dot active"></span><span class="dot"></span><span class="dot"></span></div>
+      </div>
+
+      <!-- Page 2 -->
+      <div class="page" id="p2" data-index="1">
+        <div class="bubble">
+          <div class="big">you’re honestly amazing ✨</div>
+          <p class="small">your smile, your laugh, the little things — they mean a lot. tap to see a surprise.</p>
+        </div>
+        <div class="dots"><span class="dot"></span><span class="dot active"></span><span class="dot"></span></div>
+      </div>
+
+      <!-- Page 3 -->
+      <div class="page" id="p3" data-index="2">
+        <div class="bubble">
+          <div class="big">ready for a tiny party? 🎉</div>
+          <p class="small">tap the button and watch the cute chaos. (and maybe a monkey will cheer)</p>
+          <div style="display:flex;gap:10px;justify-content:center;margin-top:12px">
+            <button class="btn" id="partyBtn">pop confetti</button>
+            <button class="btn ghost" id="restartBtn">restart</button>
+          </div>
+        </div>
+        <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot active"></span></div>
+      </div>
+
+      <div class="tap-area" id="tapArea" aria-hidden="false"></div>
+      <div class="tap-hint" id="tapHint">tap anywhere to continue</div>
+
+      <!-- cute monkey -->
+      <div class="monkey" id="monkey">🐒</div>
+    </div>
+
+    <div style="display:flex;justify-content:center;gap:10px;margin-top:12px">
+      <button class="btn" id="copyLink">copy link</button>
+      <button class="btn ghost" id="openLink">open</button>
+    </div>
+
+    <footer>Replace <code>[name]</code> with the real name locally before uploading.</footer>
+  </div>
+
+  <div class="confetti" id="confetti"></div>
+
+<script>
+  // basic page flow
+  const pages = [...document.querySelectorAll('.page')];
+  const tapArea = document.getElementById('tapArea');
+  const tapHint = document.getElementById('tapHint');
+  const monkey = document.getElementById('monkey');
+  const confettiWrap = document.getElementById('confetti');
+  let idx = 0;
+  function show(i){ pages.forEach((p,pi)=>{ p.classList.toggle('active', pi===i); }); idx = i; tapHint.style.opacity = (idx===pages.length-1? '0': '1'); }
+  function advance(){ if(idx < pages.length-1) show(idx+1); else { monkey.classList.add('bounce'); setTimeout(()=>monkey.classList.remove('bounce'),900); } }
+  tapArea.addEventListener('click', (e)=>{ if(e.target.closest('button')) return; advance(); });
+  window.addEventListener('keydown', (e)=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); advance(); } });
+
+  // confetti
+  function makeConfetti(){
+    const colors = ['#ff7aa0','#ffd1ec','#ffefc7','#ffd6e8','#ffb6d5'];
+    for(let i=0;i<50;i++){
+      const el = document.createElement('div');
+      el.style.left = Math.random()*100 + '%';
+      el.style.top = '-5%';
+      el.style.width = (6+Math.random()*14)+'px';
+      el.style.height = (8+Math.random()*10)+'px';
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.transform = 'rotate('+Math.random()*360+'deg)';
+      confettiWrap.appendChild(el);
+      const duration = 2400 + Math.random()*1600;
+      const start = performance.now();
+      function frame(now){
+        const t = Math.min(1,(now-start)/duration);
+        el.style.top = (t*110)+'%';
+        el.style.left = (parseFloat(el.style.left) + (Math.random()*20-10)*t) + '%';
+        el.style.opacity = 1-t;
+        if(t<1) requestAnimationFrame(frame); else el.remove();
+      }
+      requestAnimationFrame(frame);
+    }
+    // small heart burst
+    for(let h=0; h<6; h++){ createHeart(); }
+  }
+  function createHeart(){
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.style.left = (20 + Math.random()*60) + '%';
+    heart.style.fontSize = (18 + Math.random()*20) + 'px';
+    heart.textContent = ['💕','💗','💓','💖'][Math.floor(Math.random()*4)];
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(), 3500);
+  }
+
+  // party button
+  document.getElementById('partyBtn').addEventListener('click', ()=>{ makeConfetti(); monkey.classList.add('bounce'); setTimeout(()=>monkey.classList.remove('bounce'),900); });
+
+  // restart
+  document.getElementById('restartBtn').addEventListener('click', ()=> show(0));
+
+  // copy/open link
+  const base = location.origin + location.pathname;
+  document.getElementById('copyLink').addEventListener('click', async ()=>{
+    const href = base + '#page' + (idx+1);
+    try{ await navigator.clipboard.writeText(href); alert('Link copied: ' + href); }catch(e){ prompt('Copy this link', href); }
+  });
+  document.getElementById('openLink').addEventListener('click', ()=>{ const href = base + '#page' + (idx+1); window.open(href, '_blank'); });
+
+  // small music loader (local file named music.mp3)
+  const musicToggle = document.getElementById('musicToggle');
+  let audio;
+  let playing = false;
+  function loadAudio(){
+    audio = new Audio('music.mp3');
+    audio.loop = true;
+    audio.volume = 0.65;
+    audio.addEventListener('error', ()=>{ musicToggle.textContent = '🎵 Music (no file)'; });
+    audio.addEventListener('canplay', ()=>{ musicToggle.textContent = '🎵 Music (ready)'; });
+  }
+  musicToggle.addEventListener('click', ()=>{
+    if(!audio){ loadAudio(); musicToggle.textContent = '🎵 Loading...'; return; }
+    if(playing){ audio.pause(); playing=false; musicToggle.textContent='🎵 Music'; }
+    else { audio.play().then(()=>{ playing=true; musicToggle.textContent='🔊 Pause'; }).catch(()=>{ musicToggle.textContent='🎵 Tap to allow'; }); }
+  });
+
+  // reveal if hash provided
+  const h = location.hash.replace('#','');
+  if(h.startsWith('page')){
+    const n = parseInt(h.replace('page','')) - 1;
+    if(!Number.isNaN(n) && n>=0 && n<pages.length) show(n);
+  }
+
+  // initial
+  show(0);
+</script>
+</body>
+</html>
